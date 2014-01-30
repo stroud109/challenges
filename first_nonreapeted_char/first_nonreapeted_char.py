@@ -18,6 +18,7 @@ h
 '''
 
 import re
+from collections import OrderedDict
 from sys import argv
 
 solution_file = open(argv[1])
@@ -25,14 +26,17 @@ solution_list = solution_file.readlines()
 
 
 def get_first_nonrepeat_char(word):
-    char_dict = {}
+    char_dict = OrderedDict()
     for char in word:
-        print 'char: ', char
+        # print 'char: ', char
         if char not in char_dict:
             char_dict[char] = 1
         else:
             char_dict[char] += 1
-    # TODO
+    for key, value in char_dict.iteritems():
+        if value == 1:
+            print key
+            break
 
 for word in solution_list:
     word = re.sub(' +', ' ', word)
