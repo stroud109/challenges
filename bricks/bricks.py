@@ -103,6 +103,7 @@ def determine_if_bricks_fit(coordinates_file):
         results.append(line_results)
 
     for result in results:
+        result = sorted(result, key=lambda x: x if x == '-' else int(x))
         print ','.join(result)
 
 determine_if_bricks_fit(coordinates_file)
