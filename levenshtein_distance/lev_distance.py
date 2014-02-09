@@ -47,17 +47,44 @@ The word list always will be the same and it's length will be
 around 10000 words
 '''
 
+from itertools import chain
 from sys import argv
 import re
 
 input_file = open(argv[1])
 input_file_lines = input_file.readlines()
 
-
 def clean_line(line):
     line = re.sub(' +', ' ', line)
     line = line.strip()
     return line
+
+
+def is_lev_distance_one(long_word, short_word):
+
+    if len(long_word) < len(short_word):
+        return is_lev_distance_one(short_word, long_word)
+
+    if len(long_word) - len(short_word) > 1:
+        return False
+
+    if len(long_word) == len(short_word):
+        distance = 0
+        for i in xrange(len(short_word)):
+            if short_word[i] != long_word[i]:
+                distance += 1
+            if distance > 1:
+                return False
+        return True
+
+    assert len(short_word) + 1 == len(long_word)
+
+    for i in xrange(len(short_word)):
+        if short_word[i] != long_word[i]:
+            assert len(short_word[i:]) == len(long_word[i + 1:])
+            return short_word[i:] == long_word[i + 1:]
+
+    return get_lev_distance(long_word, short_word) == 1
 
 
 def get_lev_distance(string1, string2):
@@ -83,20 +110,34 @@ def get_lev_distance(string1, string2):
     return previous_row[-1]
 
 
-def get_friends_list(origin_word, all_network, origins_network=None):
-    # print 'origin_word: ', origin_word
+def organize_network_by_lengths(all_network):
+    grouped_dict = {}
+
+    for word in all_network:
+        if len(word) in grouped_dict:
+            grouped_dict[len(word)].append(word)
+        else:
+            grouped_dict[len(word)] = [word]
+    return grouped_dict
+
+
+def get_friends_list(origin_word, grouped_network, origins_network=None):
 
     if not origins_network:
         origins_network = {}
 
-    for word in all_network:
-        # print 'word: ', word
+    for word in chain(
+        grouped_network[len(origin_word)],
+        grouped_network[len(origin_word) + 1],
+        grouped_network[len(origin_word) - 1]
+    ):
+
         if word in origins_network:
             continue
 
-        if get_lev_distance(origin_word, word) == 1:
+        if is_lev_distance_one(origin_word, word):
             origins_network[word] = True
-            get_friends_list(word, all_network, origins_network)
+            get_friends_list(word, grouped_network, origins_network)
 
     return len(origins_network)
 
@@ -115,7 +156,9 @@ for line in input_file_lines:
     else:
         word_network.append(line)
 
+grouped_network = organize_network_by_lengths(word_network)
+
 for word in test_cases:
     clean_line(word)
     if word:
-        print get_friends_list(word, word_network)
+        print get_friends_list(word, grouped_network)
