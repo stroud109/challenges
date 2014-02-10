@@ -69,11 +69,8 @@ def is_lev_distance_one(long_word, short_word):
                 return False
         return True
 
-    assert len(short_word) + 1 == len(long_word)
-
     for i in xrange(len(short_word)):
         if short_word[i] != long_word[i]:
-            assert len(short_word[i:]) == len(long_word[i + 1:])
             return short_word[i:] == long_word[i + 1:]
 
     return get_lev_distance(long_word, short_word) == 1
