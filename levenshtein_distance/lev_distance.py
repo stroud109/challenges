@@ -47,17 +47,9 @@ The word list always will be the same and it's length will be
 around 10000 words
 '''
 
-from itertools import chain
+from itertools import chain, imap
 from sys import argv
-import re
-
-input_file = open(argv[1])
-input_file_lines = input_file.readlines()
-
-def clean_line(line):
-    line = re.sub(' +', ' ', line)
-    line = line.strip()
-    return line
+from string import rstrip
 
 
 def is_lev_distance_one(long_word, short_word):
@@ -141,12 +133,14 @@ def get_friends_list(origin_word, grouped_network, origins_network=None):
 
     return len(origins_network)
 
+with open(argv[1]) as input_file:
+    lines = filter(lambda line: line, imap(rstrip, input_file))
+
 test_cases = []
 word_network = []
 reading_test_cases = True
 
-for line in input_file_lines:
-    line = clean_line(line)
+for line in lines:
     if not line:
         continue
     if 'END OF INPUT' in line:
@@ -159,6 +153,5 @@ for line in input_file_lines:
 grouped_network = organize_network_by_lengths(word_network)
 
 for word in test_cases:
-    clean_line(word)
     if word:
         print get_friends_list(word, grouped_network)
