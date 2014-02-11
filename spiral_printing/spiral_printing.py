@@ -65,7 +65,6 @@ with open(argv[1]) as input_file:
     lines = filter(lambda line: line, imap(rstrip, input_file))
 
 for line in lines:
-    if line:
         num_rows, num_cols, coord_string = line.split(';')
         num_cols = int(num_cols)
         num_rows = int(num_rows)
