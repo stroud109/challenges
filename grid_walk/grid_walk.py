@@ -56,7 +56,7 @@ def create_grid_position_set(x_coord=0, y_coord=0, grid_set=None):
 
 
 ## BONUS:
-# To see a pretty grid, uncomment the following lines:
+## To see a pretty grid, uncomment the following lines:
 #
 # the_grid = create_grid_position_set()
 # for i in xrange(300):
