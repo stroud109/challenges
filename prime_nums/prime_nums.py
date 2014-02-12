@@ -32,6 +32,9 @@ def primes(num):
     list_of_primes = [2]
     counter = 3
 
+    # We're going to continue finding primes using our counter
+    # until we break out of it when we have N `num` items in
+    # our list of primes.
     while len(list_of_primes) < num:
 
         is_prime = True
