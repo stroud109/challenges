@@ -21,18 +21,17 @@ from sys import argv
 
 
 def mod(n, m):
-    # print 'n: ', n
-    # print 'm: ', m
+
     if n == m:
         return 0
+
     elif m > n:
         return n
+
     else:
         # `i` signifies how many times `m` can cleanly fit into `n`.
         # Using an int rather than a float will give us this value.
         i = n / m
-        # print '%d / % d = %d' % (n, m, i)
-        # print '%d - (%d * %d)' % (n, i, m)
         return n - (i * m)
 
 

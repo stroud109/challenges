@@ -19,11 +19,9 @@ Print to stdout, the fibonacci number, F(n). E.g.
 144
 '''
 
-import re
+from itertools import imap
+from string import rstrip
 from sys import argv
-
-num_file = open(argv[1])
-solutions = num_file.readlines()
 
 
 def fibonacci(n):
@@ -36,19 +34,18 @@ def fibonacci(n):
 
 
 def fib_list(n):
-    # print "n: ", n
     new_list = []
     if n == 0:
-        print n
+        return n
     else:
         while n:
             new_list.append(fibonacci(n))
             n = n - 1
-        print new_list[0]
+        return new_list[0]
 
-for num in solutions:
-    num = re.sub(' +', ' ', num)
-    num = num.strip()
-    if num:
-        fib_list(int(num))
+with open(argv[1]) as input_file:
+    input_nums = filter(lambda num: num, imap(rstrip, input_file))
+
+for num in input_nums:
+    print fib_list(int(num))
 

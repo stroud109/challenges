@@ -1,6 +1,7 @@
 '''
 CHALLENGE DESCRIPTION:
 (https://www.codeeval.com/open_challenges/46/)
+
 Print out the prime numbers less than a given number N. For bonus
 points your solution should run in N*(log(N)) time or better. You
 may assume that N is always a positive integer.

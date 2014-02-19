@@ -85,6 +85,7 @@ def get_lev_distance(string1, string2):
         return len(string1)
 
     previous_row = xrange(len(string2) + 1)
+
     for i, char1 in enumerate(string1):
         current_row = [i + 1]
         for j, char2 in enumerate(string2):

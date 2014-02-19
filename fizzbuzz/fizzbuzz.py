@@ -28,38 +28,35 @@ on each line you print. E.g.
 '''
 
 import re
+from itertools import imap
+from string import rstrip
 from sys import argv
 
-solution_file = open(argv[1])
-num_sequence = solution_file.readlines()
 
+def fizzbuzz(sequence):
 
-def fizzbuzz(num_sequence):
+    split_nums = sequence.split(' ')
+    fizz = int(split_nums[0])
+    buzz = int(split_nums[1])
+    max_num = int(split_nums[2]) + 1
+    solution = ''
 
-    num_sequence = re.sub(' +', ' ', num_sequence)
-    num_sequence = num_sequence.strip()
+    for num in range(max_num):
+        if num > 0:
+            if num % fizz == 0 and num % buzz == 0:
+                solution += 'FB '
+            elif num % fizz == 0:
+                solution += 'F '
+            elif num % buzz == 0:
+                solution += 'B '
+            else:
+                solution += str(num) + ' '
 
-    if num_sequence:
+    solution = re.sub(' +', ' ', solution)
+    return solution.strip()
 
-        split_nums = num_sequence.split(' ')
-        fizz = int(split_nums[0])
-        buzz = int(split_nums[1])
-        max_num = int(split_nums[2]) + 1
-        solution = ''
+with open(argv[1]) as input_file:
+    num_sequences = filter(lambda sequence: sequence, imap(rstrip, input_file))
 
-        for num in range(max_num):
-            if num > 0:
-                if num % fizz == 0 and num % buzz == 0:
-                    solution += 'FB '
-                elif num % fizz == 0:
-                    solution += 'F '
-                elif num % buzz == 0:
-                    solution += 'B '
-                else:
-                    solution += str(num) + ' '
-        solution = re.sub(' +', ' ', solution)
-        solution = solution.strip()
-        print solution
-
-for sequence in num_sequence:
-        fizzbuzz(sequence)
+for sequence in num_sequences:
+        print fizzbuzz(sequence)

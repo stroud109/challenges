@@ -32,78 +32,67 @@ Coordinates are in range [-100, 100]
 There might be up to 15 bricks you need to check.
 '''
 
+from itertools import imap
+from string import rstrip
 from sys import argv
 import re
 
-coordinates_file = open(argv[1])
-coordinates = coordinates_file.readlines()
 
-
-def determine_if_bricks_fit(coordinates_file):
+def determine_if_bricks_fit(line):
 
     results = []
+    line_results = []
 
-    for i, line in enumerate(coordinates):
-        line = re.sub(' +', ' ', line)
-        line = line.strip()
+    # First, we seperate brick coords from hole coords.
+    split_line = line.split('|')
 
-        if not line:
-            continue
+    # Next, we reformat all hole coords.
+    hole_coordinates = split_line[0]
+    coords = re.sub(r'[^0-9-]', ' ', hole_coordinates)
+    striped_coord = re.sub(' +', ' ', coords)
+    striped_coord = striped_coord.strip()
+    split_coord = striped_coord.split(' ')
 
-        line_results = []
-        split_line = line.split('|')
-        hole_coordinates = split_line[0].split(' ')
-        x_hole_coords = []
-        y_hole_coords = []
+    # After reformatting, we split the hole's dimensions.
+    hole_width = abs(int(split_coord[0]) - int(split_coord[2]))
+    hole_height = abs(int(split_coord[1]) - int(split_coord[3]))
+    hole_dimensions = [hole_width, hole_height]
+    hole_dimensions.sort()
 
-        for coord in hole_coordinates:
+    # Next, we seperate and reformat the different bricks.
+    bricks = split_line[1].split(';')
 
-            coord = re.sub(r'[^0-9-]', ' ', coord)
-            striped_coord = coord.strip()
-            split_coord = striped_coord.split(' ')
-            x_hole_coords.append(int(split_coord[0]))
-            y_hole_coords.append(int(split_coord[1]))
+    for brick in bricks:
 
-        # assuming there is a hole, the difference cannot be 0
-        hole_width = abs(x_hole_coords[0] - x_hole_coords[1])
-        hole_height = abs(y_hole_coords[0] - y_hole_coords[1])
-        hole_dimensions = [hole_width, hole_height]
-        hole_dimensions.sort()
-        bricks = split_line[1].split(';')
+        brick = re.sub(r'[^0-9-]', ' ', brick)
+        striped_brick = re.sub(' +', ' ', brick)
+        striped_brick = striped_brick.strip()
 
-        for brick in bricks:
-            l_brick_coords = []
-            w_brick_coords = []
-            d_brick_coords = []
-            brick = re.sub(r'[^0-9-]', ' ', brick)
-            striped_brick = re.sub(' +', ' ', brick)
-            striped_brick = striped_brick.strip()
-            split_brick = striped_brick.split(' ')
-            brick_id = split_brick[0]
-            l_brick_coords.append(int(split_brick[1]))
-            l_brick_coords.append(int(split_brick[4]))
-            w_brick_coords.append(int(split_brick[2]))
-            w_brick_coords.append(int(split_brick[5]))
-            d_brick_coords.append(int(split_brick[3]))
-            d_brick_coords.append(int(split_brick[6]))
+        # After reformatting, we split a brick's coordinates.
+        split_brick = striped_brick.split(' ')
+        brick_id = split_brick[0]
+        brick_length = abs(int(split_brick[1]) - int(split_brick[4]))
+        brick_width = abs(int(split_brick[2]) - int(split_brick[5]))
+        brick_depth = abs(int(split_brick[3]) - int(split_brick[6]))
+        brick_dimensions = [brick_length, brick_width, brick_depth]
+        brick_dimensions.sort()
 
-            brick_length = abs(l_brick_coords[0] - l_brick_coords[1])
-            brick_width = abs(w_brick_coords[0] - w_brick_coords[1])
-            brick_depth = abs(d_brick_coords[0] - d_brick_coords[1])
-            brick_dimensions = [brick_length, brick_width, brick_depth]
-            brick_dimensions.sort()
+        # Now we check if bricks fit through the hole.
+        if brick_dimensions[0] <= hole_dimensions[0]:
+            if brick_dimensions[1] <= hole_dimensions[1]:
+                line_results.append(brick_id)
 
-            if brick_dimensions[0] <= hole_dimensions[0]:
-                if brick_dimensions[1] <= hole_dimensions[1]:
-                    line_results.append(brick_id)
+    if not line_results:
+        line_results.append('-')
 
-        if not line_results:
-            line_results.append('-')
-
-        results.append(line_results)
+    results.append(line_results)
 
     for result in results:
         result = sorted(result, key=lambda x: x if x == '-' else int(x))
-        print ','.join(result)
+        return ','.join(result)
 
-determine_if_bricks_fit(coordinates_file)
+with open(argv[1]) as input_file:
+    lines = filter(lambda line: line, imap(rstrip, input_file))
+
+for line in lines:
+    print determine_if_bricks_fit(line)

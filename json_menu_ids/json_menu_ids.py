@@ -32,11 +32,10 @@ Print results in the following way.
 '''
 
 from sys import argv
-import json
-import re
+from itertools import imap
+from string import rstrip
 
-menu_file = open(argv[1])
-menus = menu_file.readlines()
+import json
 
 
 def get_sum_of_ids(menu):
@@ -45,10 +44,9 @@ def get_sum_of_ids(menu):
         if item and 'label' in item
     )
 
-for menu in menus:
-    menu = re.sub(' +', ' ', menu)
-    menu = menu.strip()
-    if menu:
-        menu = json.loads(menu)
-        print get_sum_of_ids(menu)
+with open(argv[1]) as input_file:
+    menus = filter(lambda menu: menu, imap(rstrip, input_file))
 
+for menu in menus:
+    menu = json.loads(menu)
+    print get_sum_of_ids(menu)
