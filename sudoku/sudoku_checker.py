@@ -29,15 +29,13 @@ True
 False
 '''
 
-import re
+from itertools import imap
 from math import sqrt
+from string import rstrip
 from sys import argv
 
-solution_file = open(argv[1])
-solution = solution_file.readlines()
 
-
-def check_array_validity(array):
+def is_array_valid(array):
     d_of_nums = {}
     for i in array:
         if i in d_of_nums:
@@ -47,65 +45,85 @@ def check_array_validity(array):
     return True
 
 
-def check_board_validity(solution):
-
-    split_solution = solution.split(';')
-    board_size = int(split_solution[0])
-    board_dimension = int(sqrt(board_size))
-    solution_list = split_solution[1]
-    solution_list = solution_list.split(',')
+def make_nested_list(solution_list, board_size):
 
     board_solution = []
 
+    # The board size coorelates to the board length, so we know if `i`
+    # is cleanly divisible by the board size we're at the beginning of a row.
     for i in range(len(solution_list)):
         if i % board_size == 0:
             row = solution_list[i: i + board_size]
             if len(board_solution) < board_size:
                 board_solution.append(row)
 
-    valid = True
-    for i in range(board_size):
+    return board_solution
+
+
+def check_board_validity(board_size, inner_sq_size, board_solution):
+
+    # We will use the `check_array_validty` function to determine if
+    # the value of `row_valid` changes
+    row_valid = True
+
+    # Before delving into columns, we can check if all the rows are valid.
+    for row in board_solution:
+        row_valid = is_array_valid(row)
+        if not row_valid:
+            return False
+
+    # Now we can iterate through the columns and check the columns and boxes.
+    for c in range(board_size):
         column = []
         box1 = []
         box2 = []
-        if board_size == 9:
-            box3 = []
+        box3 = []
 
-        for row in board_solution:
-            valid = check_array_validity(row)
-            if not valid:
-                print 'False'
-                return False
+        # We can find all contents for column `i` by iterating over rows.
+        for r in range(board_size):
+            column.append(board_solution[r][c])
 
-        for j in range(board_size):
-            column.append(board_solution[j][i])
-
-            if i % board_dimension == 0:
-                if j < board_dimension:
-                    box1 += board_solution[j][i:i + board_dimension]
-                elif j < 2 * board_dimension:
-                    box2 += board_solution[j][i:i + board_dimension]
+            # Boxes 1, 2 and 3 represent the inner sudoku squares. They are
+            # stacked top to bottom, and essentially comprise an extended
+            # column. We determine the starting point of the left, middle
+            # and right box-columns using the `inner_sq_size` variable.
+            if c % inner_sq_size == 0:
+                if r < inner_sq_size:
+                    box1 += board_solution[r][c:c + inner_sq_size]
+                elif r < 2 * inner_sq_size:
+                    box2 += board_solution[r][c:c + inner_sq_size]
                 elif board_size == 9:
-                    box3 += board_solution[j][i:i + board_dimension]
-        column_valid = check_array_validity(column)
-        if i % board_dimension == 0:
-            box1_valid = check_array_validity(box1)
-            box2_valid = check_array_validity(box2)
-            if board_size == 9:
-                box3_valid = check_array_validity(box3)
-        if board_size == 9:
-            if not (column_valid and box1_valid and box2_valid and box3_valid):
-                print 'False'
-                return False
-        else:
-            if not (column_valid and box1_valid and box2_valid):
-                print 'False'
-                return False
-    print 'True'
+                    box3 += board_solution[r][c:c + inner_sq_size]
+
+        if not is_array_valid(column):
+            return False
+
+        if box1 and not is_array_valid(box1):
+            return False
+
+        if box2 and not is_array_valid(box2):
+            return False
+
+        if box3 and not is_array_valid(box3):
+            return False
+
     return True
 
+with open(argv[1]) as input_file:
+    solution = filter(None, imap(rstrip, input_file))
+
 for board in solution:
-    board = re.sub(' +', ' ', board)
-    board = board.strip()
-    if board:
-        check_board_validity(board)
+
+    # We split the solution into its various components:
+    # the board size and the board contents.
+    split_board = board.split(';')
+    board_size = int(split_board[0])
+    inner_sq_size = int(sqrt(board_size))
+    solution_string = split_board[1]
+    solution_list = solution_string.split(',')
+
+    # `board_solution` will be a list-of-lists, with the inner lists
+    # containing the contents of each row.
+    board_solution = make_nested_list(solution_list, board_size)
+
+    print check_board_validity(board_size, inner_sq_size, board_solution)
