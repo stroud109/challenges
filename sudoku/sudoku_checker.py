@@ -36,13 +36,13 @@ from sys import argv
 
 
 def is_array_valid(array):
-    d_of_nums = {}
-    for i in array:
-        if i in d_of_nums:
-            return False
-        else:
-            d_of_nums[i] = True
-    return True
+
+    num_set = set(array)
+
+    if len(num_set) != len(array):
+        return False
+    else:
+        return True
 
 
 def make_nested_list(solution_list, board_size):
