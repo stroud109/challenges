@@ -55,8 +55,14 @@ def fizzbuzz(sequence):
     solution = re.sub(' +', ' ', solution)
     return solution.strip()
 
-with open(argv[1]) as input_file:
-    num_sequences = filter(lambda sequence: sequence, imap(rstrip, input_file))
 
-for sequence in num_sequences:
+if __name__ == '__main__':
+
+    with open(argv[1]) as input_file:
+        num_sequences = filter(
+            lambda sequence: sequence,
+            imap(rstrip, input_file)
+        )
+
+    for sequence in num_sequences:
         print fizzbuzz(sequence)

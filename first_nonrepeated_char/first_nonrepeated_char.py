@@ -17,29 +17,28 @@ y
 h
 '''
 
-import re
 from collections import OrderedDict
+from itertools import imap
+from string import rstrip
 from sys import argv
-
-solution_file = open(argv[1])
-solution_list = solution_file.readlines()
 
 
 def get_first_nonrepeat_char(word):
     char_dict = OrderedDict()
     for char in word:
-        # print 'char: ', char
         if char not in char_dict:
             char_dict[char] = 1
         else:
             char_dict[char] += 1
     for key, value in char_dict.iteritems():
         if value == 1:
-            print key
+            return key
             break
 
-for word in solution_list:
-    word = re.sub(' +', ' ', word)
-    word = word.strip()
-    if word:
-        get_first_nonrepeat_char(word)
+if __name__ == '__main__':
+
+    with open(argv[1]) as input_file:
+        solution_list = filter(None, imap(rstrip, input_file))
+
+    for word in solution_list:
+        print get_first_nonrepeat_char(word)
