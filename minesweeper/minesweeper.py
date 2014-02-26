@@ -50,8 +50,6 @@ def left_edge_position(i, board_width):
 
 
 def right_edge_position(i, board_width):
-    # if (i + 1) % board_width == 0:
-        # return True
     return left_edge_position(i + 1, board_width)
 
 
@@ -115,5 +113,4 @@ if __name__ == '__main__':
         split_solution = solution.split(';')
         dimensions = split_solution[0]
         board = split_solution[1]
-        # print ','.join([tile.mines_nearby for tile in board if not tile.is_mined() else tile.value])
         print complete_minesweeper_board(dimensions, board)
