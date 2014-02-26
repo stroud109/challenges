@@ -34,11 +34,9 @@ how many adjacent mines are there. E.g.
 
 '''
 
+from itertools import imap
+from string import rstrip
 from sys import argv
-import re
-
-solution_file = open(argv[1])
-solutions = solution_file.readlines()
 
 
 def position_is_validity(i, board):
@@ -108,8 +106,14 @@ def complete_minesweeper_board(dimensions, board):
 
     return ''.join(str(tile) for tile in board)
 
-for solution in solutions:
-    solution = re.sub(' +', ' ', solution)
-    solution = solution.strip()
-    if solution:
-        print complete_minesweeper_board(*solution.split(';'))
+if __name__ == '__main__':
+
+    with open(argv[1]) as input_file:
+        solutions = filter(None, imap(rstrip, input_file))
+
+    for solution in solutions:
+        split_solution = solution.split(';')
+        dimensions = split_solution[0]
+        board = split_solution[1]
+        # print ','.join([tile.mines_nearby for tile in board if not tile.is_mined() else tile.value])
+        print complete_minesweeper_board(dimensions, board)
