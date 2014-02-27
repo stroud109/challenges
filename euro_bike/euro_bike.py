@@ -138,18 +138,14 @@ def get_shortest_route(start_city, end_city):
 
     paths = get_paths(start_city, end_city)
 
-    shortest_path = paths[0]
-    shortest_distance = 1000000000
-
-    for path in paths:
+    def path_distance(path):
         total_distance = 0
         for position, city in enumerate(path):
             if position + 1 < len(path):
                 total_distance += city.kilometers_to(path[position + 1])
-        if total_distance < shortest_distance:
-            shortest_distance = total_distance
-            shortest_path = path
-    return shortest_path
+        return total_distance
+
+    return min(paths, key=path_distance)
 
 itinerary = get_shortest_route(Rome, Berlin)
 #
