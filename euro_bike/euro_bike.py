@@ -144,8 +144,8 @@ def get_shortest_route(start_city, end_city):
     for path in paths:
         total_distance = 0
         for position, city in enumerate(path):
-            if position + 1 > len(path):
-                total_distance += city.kilometers_to(city, path[position + 1])
+            if position + 1 < len(path):
+                total_distance += city.kilometers_to(path[position + 1])
         if total_distance < shortest_distance:
             shortest_distance = total_distance
             shortest_path = path
