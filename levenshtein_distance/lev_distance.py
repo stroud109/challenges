@@ -57,9 +57,6 @@ def is_lev_distance_one(long_word, short_word):
     if len(long_word) < len(short_word):
         return is_lev_distance_one(short_word, long_word)
 
-    if len(long_word) - len(short_word) > 1:
-        return False
-
     if len(long_word) == len(short_word):
         distance = 0
         for i in xrange(len(short_word)):
@@ -77,8 +74,6 @@ def is_lev_distance_one(long_word, short_word):
 
 
 def get_lev_distance(string1, string2):
-    if len(string1) < len(string2):
-        return get_lev_distance(string2, string1)
 
     # len(string1) >= len(string2)
     if len(string2) == 0:
@@ -101,6 +96,7 @@ def get_lev_distance(string1, string2):
 
 
 def organize_network_by_lengths(all_network):
+
     grouped_dict = {}
 
     for word in all_network:
@@ -111,10 +107,10 @@ def organize_network_by_lengths(all_network):
     return grouped_dict
 
 
-def get_friends_list(origin_word, grouped_network, origins_network=None):
+def get_friends_list(origin_word, grouped_network, origins_set=None):
 
-    if not origins_network:
-        origins_network = {}
+    if not origins_set:
+        origins_set = set()
 
     for word in chain(
         grouped_network[len(origin_word)],
@@ -122,34 +118,33 @@ def get_friends_list(origin_word, grouped_network, origins_network=None):
         grouped_network[len(origin_word) - 1]
     ):
 
-        if word in origins_network:
+        if word in origins_set:
             continue
 
         if is_lev_distance_one(origin_word, word):
-            origins_network[word] = True
-            get_friends_list(word, grouped_network, origins_network)
+            origins_set.add(word)
+            get_friends_list(word, grouped_network, origins_set)
 
-    return len(origins_network)
+    return len(origins_set)
 
-with open(argv[1]) as input_file:
-    lines = filter(lambda line: line, imap(rstrip, input_file))
+if __name__ == '__main__':
 
-test_cases = []
-word_network = []
-reading_test_cases = True
+    with open(argv[1]) as input_file:
+        lines = filter(None, imap(rstrip, input_file))
 
-for line in lines:
-    if not line:
-        continue
-    if 'END OF INPUT' in line:
-        reading_test_cases = False
-    elif reading_test_cases:
-        test_cases.append(line)
-    else:
-        word_network.append(line)
+    test_cases = []
+    word_network = []
+    reading_test_cases = True
 
-grouped_network = organize_network_by_lengths(word_network)
+    for line in lines:
+        if 'END OF INPUT' in line:
+            reading_test_cases = False
+        elif reading_test_cases:
+            test_cases.append(line)
+        else:
+            word_network.append(line)
 
-for word in test_cases:
-    if word:
+    grouped_network = organize_network_by_lengths(word_network)
+
+    for word in test_cases:
         print get_friends_list(word, grouped_network)
