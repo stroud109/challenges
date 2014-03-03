@@ -113,9 +113,9 @@ def get_friends_list(origin_word, grouped_network, origins_set=None):
         origins_set = set()
 
     for word in chain(
-        grouped_network[len(origin_word)],
-        grouped_network[len(origin_word) + 1],
-        grouped_network[len(origin_word) - 1]
+        grouped_network.get(len(origin_word), []),
+        grouped_network.get(len(origin_word) + 1, []),
+        grouped_network.get(len(origin_word) - 1, [])
     ):
 
         if word in origins_set:
