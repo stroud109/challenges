@@ -24,7 +24,11 @@ length and width of a grid, signified by `m` and `n`, respectively.'''
 
 	while edges:
 		edge = edges.pop(random.randint(0, len(edges) - 1))
-		# compare what's on either side of the edge
+		if edge[3] == EAST:
+			# compare what's above and below the edge
+		elif edge[3] == NORTH:
+			# compare what's on either side of the edge
+			
 		# if the grid values are the same, add the edge to `keepers`
 		# if the grid values are different, merge the values
 
