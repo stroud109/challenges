@@ -18,14 +18,17 @@ def generate_edges_and_paths(width, height):
     for x in range(width):
         for y in range(height):
             paths[(x, y)] = Path()
-            if x > 0 and x < width:
-                edge = (x, y, NORTH)
-                if edge not in edges:
-                    edges.append(edge)
-            elif y > 0 and y < height:
+            if y == 0 and x > 0 and x < width:
+                edge = (x, y , NORTH)
+                edges.append(edge)
+            elif x == 0 and y > 0 and y < height:
                 edge = (x, y, EAST)
-                if edge not in edges:
-                    edges.append(edge)
+                edges.append(edge)
+            elif y > 0 and y < height and x > 0 and x < width:
+                edge_east = (x, y, EAST)
+                edge_north = (x, y, NORTH)
+                edges.append(edge_east)
+                edges.append(edge_north)
 
     return edges, paths
 
@@ -42,6 +45,9 @@ def generate_maze(width, height):
 
     edges, paths = generate_edges_and_paths(width, height)
 
+    print 'edges: ', edges
+    print 'paths: ', paths
+
     # if the grid values are the same, add the edge to `walls`
     # if the grid values are different, merge the values
     walls = []
@@ -53,27 +59,31 @@ def generate_maze(width, height):
         if edge[2] == EAST:
             # compare what's above and below the edge
             a_path_coords = (edge[0], edge[1])
+            print 'EAST a_path_coords: ', a_path_coords
             # if the edges were correctly recorded, all values here should be valid
-            b_path_coords = (edge[0], (edge[1] + width))
+            b_path_coords = (edge[0], (edge[1] - 1))
+            print 'EAST b_path_coords: ', b_path_coords
             if paths[a_path_coords] is not paths[b_path_coords]:
-                paths[a_path_coords] = paths[b_path_coords]
+                paths[b_path_coords] = paths[a_path_coords]
+                print 'EAST reassigned paths[a_path_coords]: ', paths[a_path_coords]
             else:
                 walls.append(edge)
-
 
         elif edge[2] == NORTH:
             # compare what's on either side of the edge
             a_path_coords = (edge[0], edge[1])
+            print 'NORTH a_path_coords: ', a_path_coords
             # if the edges were correctly recorded, all values here should be valid
-            b_path_coords = ((edge[0] + 1), edge[1])
-            if paths[a_path_coords] is not b_path_coords:
-                paths[a_path_coords] = paths[b_path_coords]
+            b_path_coords = ((edge[0] - 1), edge[1])
+            print 'NORTH b_path_coords: ', b_path_coords
+            if paths[a_path_coords] is not paths[b_path_coords]:
+                paths[b_path_coords] = paths[a_path_coords]
+                print 'NORTH reassigned paths[a_path_coords]: ', paths[a_path_coords]
             else:
                 walls.append(edge)
-
     return walls
 
 
 if __name__ == '__main__':
-    print generate_maze(width, height)
+    print generate_maze(3, 3)
 
