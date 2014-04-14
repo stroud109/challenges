@@ -43,8 +43,8 @@ def generate_edges_and_paths(width, height):
 
 def generate_maze(width, height):
     '''
-    Create a function that randomly produces mazes. This function takes the
-    length and width of a grid, signified by `m` and `n`, respectively.
+    A function that randomly produces mazes.
+    Takes the length and width of a grid as arguments.
     '''
 
     edges, path_at_tile_coords = generate_edges_and_paths(width, height)
@@ -54,57 +54,39 @@ def generate_maze(width, height):
     print 'original number of edges: ', len(edges)
     print 'original number of path_at_tile_coords: ', len(path_at_tile_coords)
 
-    # if the grid values are the same, add the edge to `walls`
-    # if the grid values are different, merge the values
+    # If the tile values are the same, add the edge to `walls`.
+    # If the tile values are different, merge the values.
     walls = []
 
     while edges:
 
         edge = edges.pop(random.randint(0, len(edges) - 1))
-        print '\npopped edge: ', edge
+
+        # Calculate coordinates for the tiles that this edge separates.
+        a_path_coords = (edge[0], edge[1])
+
+        # If the edge faces east, compare what's above and below the edge.
         if edge[2] == EAST:
-            # compare what's above and below the edge
-            a_path_coords = (edge[0], edge[1])
             b_path_coords = (edge[0], (edge[1] - 1))
-            print 'comparing path instances at %s and %s' % (a_path_coords, b_path_coords)
-            print 'path_at_tile_coords[a_path_coords]: ', path_at_tile_coords[a_path_coords]
-            print 'path_at_tile_coords[b_path_coords]: ', path_at_tile_coords[b_path_coords]
-            if not path_at_tile_coords[a_path_coords].intersection(path_at_tile_coords[b_path_coords]):
-                print '>> NOT EQUAL, making them equal'
-                joined_path = path_at_tile_coords[a_path_coords].union(path_at_tile_coords[b_path_coords])
 
-                # For each tile in the joined path, we need to go over
-                # 'path_at_tile_coords[tile.coords]' and set the path at that coord to be
-                # the joined path:
-                for tile in joined_path:
-                    path_at_tile_coords[tile.coords] = joined_path
-
-            else:
-                print '>> EQUAL equal, saving edge to list of walls'
-                walls.append(edge)
-
+        # If the edge faces north, compare what's on either side of the edge.
         elif edge[2] == NORTH:
-            # compare what's on either side of the edge
-            a_path_coords = (edge[0], edge[1])
             b_path_coords = ((edge[0] - 1), edge[1])
-            print 'comparing path instances at %s and %s' % (a_path_coords, b_path_coords)
-            print 'path_at_tile_coords[a_path_coords]: ', path_at_tile_coords[a_path_coords]
-            print 'path_at_tile_coords[b_path_coords]: ', path_at_tile_coords[b_path_coords]
-            if not path_at_tile_coords[a_path_coords].intersection(path_at_tile_coords[b_path_coords]):
-                print '>> NOT EQUAL, making them equal'
-                joined_path = path_at_tile_coords[a_path_coords].union(path_at_tile_coords[b_path_coords])
 
-                for tile in joined_path:
-                    path_at_tile_coords[tile.coords] = joined_path
+        if not path_at_tile_coords[a_path_coords].intersection(path_at_tile_coords[b_path_coords]):
+            joined_path = path_at_tile_coords[a_path_coords].union(path_at_tile_coords[b_path_coords])
 
-            else:
-                print '>> EQUAL equal, saving edge to list of walls'
-                walls.append(edge)
+            # For each tile in the joined path, we need to go over.
+            # 'path_at_tile_coords[tile.coords]' and set the path at that coord to be
+            # the joined path:
+            for tile in joined_path:
+                path_at_tile_coords[tile.coords] = joined_path
+
+        else:
+            walls.append(edge)
 
     pprint(path_at_tile_coords)
-    print 'WALLS: '
     return walls
-
 
 if __name__ == '__main__':
     print generate_maze(3, 3)
