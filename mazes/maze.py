@@ -6,11 +6,12 @@ import string
 
 EAST = 'E'
 NORTH = 'N'
-chars = iter(string.ascii_uppercase)
+
 
 class Tile(object):
-    def __init__(self, coords):
-        self.name = chars.next()
+
+    def __init__(self, name, coords):
+        self.name = name
         self.coords = coords
 
     def __repr__(self):
@@ -19,24 +20,27 @@ class Tile(object):
 
 def generate_edges_and_paths(width, height):
 
+    # Because I'm using the alphabet, my board is limited to
+    # 26 tiles right now. I'm only using tile names to verify
+    # things visually.
+
+    chars = iter(string.ascii_uppercase)
+
     edges = []
     #generate path instances while getting edges
     tiles_by_coordinates = {}
 
     for x in range(width):
         for y in range(height):
-            tiles_by_coordinates[(x, y)] = set([Tile((x, y))])
-            if y == 0 and x > 0 and x < width:
-                edge = (x, y , NORTH)
+            tiles_by_coordinates[(x, y)] = set([Tile(chars.next(), (x, y))])
+
+            if y >= 0 and x > 0 and x < width:
+                edge = (x, y, NORTH)
                 edges.append(edge)
-            elif x == 0 and y > 0 and y < height:
+
+            if x >= 0 and y > 0 and y < height:
                 edge = (x, y, EAST)
                 edges.append(edge)
-            elif y > 0 and y < height and x > 0 and x < width:
-                edge_east = (x, y, EAST)
-                edge_north = (x, y, NORTH)
-                edges.append(edge_east)
-                edges.append(edge_north)
 
     return edges, tiles_by_coordinates
 
@@ -73,12 +77,16 @@ def generate_maze(width, height):
         elif edge[2] == NORTH:
             b_path_coords = ((edge[0] - 1), edge[1])
 
-        if not path_at_tile_coords[a_path_coords].intersection(path_at_tile_coords[b_path_coords]):
-            joined_path = path_at_tile_coords[a_path_coords].union(path_at_tile_coords[b_path_coords])
+        if not path_at_tile_coords[a_path_coords].intersection(
+            path_at_tile_coords[b_path_coords]
+        ):
+            joined_path = path_at_tile_coords[a_path_coords].union(
+                path_at_tile_coords[b_path_coords]
+            )
 
-            # For each tile in the joined path, we need to go over.
-            # 'path_at_tile_coords[tile.coords]' and set the path at that coord to be
-            # the joined path:
+            # For each tile in the joined path, we need to go over
+            # 'path_at_tile_coords[tile.coords]' and set the path at that coord
+            # to be the joined path:
             for tile in joined_path:
                 path_at_tile_coords[tile.coords] = joined_path
 
@@ -90,4 +98,3 @@ def generate_maze(width, height):
 
 if __name__ == '__main__':
     print generate_maze(3, 3)
-
