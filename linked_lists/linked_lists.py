@@ -39,6 +39,25 @@ class LinkedList(object):
         self.head.next = None
         self.head = temp
 
+    def is_circular(self):
+        pointer1 = self.head
+        pointer2 = self.head.next
+
+        # i = 0
+
+        while pointer2.next.next:
+
+            # print i
+            # i += 1
+
+            if pointer1 is pointer2:
+                return True
+
+            pointer1 = pointer1.next
+            pointer2 = pointer2.next.next
+
+        return False
+
 a = Node("s")
 b = Node("t")
 c = Node("e")
@@ -55,11 +74,13 @@ d.next = e
 e.next = f
 f.next = g
 g.next = h
-h.next = i
+h.next = a
 
 stephanie = LinkedList()
 stephanie.head = a
 
-stephanie.print_linked_list()
-stephanie.rev_linked_list()
-stephanie.print_linked_list()
+# stephanie.print_linked_list()
+# stephanie.rev_linked_list()
+# stephanie.print_linked_list()
+
+print stephanie.is_circular()
