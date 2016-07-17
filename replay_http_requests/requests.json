@@ -1,0 +1,10 @@
+{
+    "requests": [
+        {"method": "GET", "url": "https://google.com/api", "headers": {"json": "magic"}},
+        {"method": "POST", "url": "https://google.com/api", "body": {"hello": "world"}, "headers": {"json": "magic"}},
+        {"method": "PUT", "url": "https://google.com/api", "body": {"hello": "world"}},
+        {"method": "DELETE", "url": "https://google.com/api"},
+        {"method": "PATCH", "url": "https://google.com/api", "body": {"hello": "world"}},
+        {"method": "HEAD", "url": "https://google.com/api", "bad_key": {"poopoo": "to you"}}
+    ]
+}
